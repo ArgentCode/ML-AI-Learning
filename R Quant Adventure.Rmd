@@ -1,0 +1,81 @@
+---
+title: "R Quant Adventure"
+author: "CSAFE"
+date: "2022-12-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(quantmod)
+library(tidyverse)
+```
+
+```{r}
+data = readxl::read_excel("./Linkedin Exercises/Algo Trading/ch03/03_02/03_02_Start_R.xlsx")
+```
+
+# R finance course
+This is the R and Bond trading section of the Linkedin Learning course "Algorithmic Trading and Finance Models with Python, R and Scala by Dr. Michael McDonald
+
+```{r}
+getSymbols("AAPL")
+```
+
+```{r}
+
+barChart(AAPL, main = "All")
+barChart(AAPL, subset="last 28 days")
+```
+
+```{r}
+rm(AAPL)
+getSymbols("GOOG")
+barChart(GOOG)
+addMACD()
+addBBands()
+chartSeries(GOOG, subset = "last 60 days")
+```
+
+```{r}
+rm(GOOG)
+getSymbols("MSFT")
+summary(MSFT)
+```
+
+```{r}
+install.packages("BatchGetSymbols")
+library(BatchGetSymbols)
+```
+
+```{r}
+first.date <- Sys.Date()-60
+last.date <- Sys.Date()
+freq.data<-"daily"
+tickers <-c("SPY", "PSEC", "SCHD")
+```
+
+```{r}
+df = BatchGetSymbols(tickers)
+```
+
+```{r}
+
+data = readxl::read_excel("./Linkedin Exercises/Algo Trading/ch03/03_05/03_05_Start_R.xlsx")
+linearMod <- lm(Cash ~ EBITDA, data = data[data$Ticker == "AAPL",])
+print(linearMod)
+```
+
+# End of Module
+
+## Investigate PSEC 
+
+```{r}
+getSymbols("PSEC")
+barChart(PSEC)
+```
+
+
+
+
+
