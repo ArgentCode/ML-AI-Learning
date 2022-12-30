@@ -1,6 +1,6 @@
 ---
 title: "R Quant Adventure"
-author: "CSAFE"
+author: "Craig Orman"
 date: "2022-12-27"
 output: html_document
 ---
@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(quantmod)
 library(tidyverse)
+library(forecast)
 ```
 
 ```{r}
@@ -71,9 +72,65 @@ print(linearMod)
 ## Investigate PSEC 
 
 ```{r}
-getSymbols("PSEC")
-barChart(PSEC)
+getSymbols("PSEC", src = "yahoo")
 ```
+
+
+```{r}
+psec = data.frame(PSEC)
+psec <- cbind(Date = rownames(psec), psec)
+rownames(psec) <- 1:nrow(psec)
+```
+
+
+```{r}
+ggplot(data = psec[psec$Date > "2022-01-01", ], aes(x = Date, y=PSEC.Close)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  ggtitle("PSEC Close") +
+  ylab("Open cost in $")
+```
+#Arima Model
+
+```{r}
+start = as.Date("2007/01/01")
+end = as.Date("2020/12/31")
+dates <- data.frame(Date = seq(start, end, "days"))
+```
+
+
+```{r}
+library(forecast)
+getSymbols("PSEC", src = "yahoo")
+psec = data.frame(PSEC)
+rm(PSEC)
+colnames(psec) = c("Open", "High", "Low", "Close", "Volume", "Adjusted")
+psec <- cbind(Date = rownames(psec), psec)
+rownames(psec) <- 1:nrow(psec)
+psec$Date <- as.Date(psec$Date)
+psec <- merge(dates, psec, all.x = TRUE)
+```
+
+```{r}
+close = ts(psec[,5],
+           start = c(2007),
+           frequency = 365)
+
+plot(diff(close))
+```
+
+```{r}
+ARIMAfit = auto.arima(close, approximation=FALSE,trace=FALSE)
+```
+
+```{r}
+plot(close)
+forecast = predict(ARIMAfit, n.ahead=30)
+plot(forecast))
+```
+
+
+
 
 
 

@@ -1,0 +1,45 @@
+---
+title: "R Quant Adventure Predict"
+author: "Craig Orman"
+date: "2022-12-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(quantmod)
+library(tseries)
+library(timeSeries)
+library(forecast)
+library(xts)
+
+```
+
+Trying to make predictions on stock prices and learn the fundamentals of time series analysis
+
+```{r}
+getSymbols("LHX",from="2015-01-01")
+```
+
+### Analyze
+
+```{r}
+plot(LHX$LHX.Close)
+```
+
+
+```{r}
+close <- LHX$LHX.Close
+fitA <- auto.arima(close, seasonal=FALSE)
+fitB <- arima(close, order=c(1,2,4))
+```
+
+```{r}
+term <- 4
+fcastA <- forecast(fitA, h=term)
+plot(fcastA)
+```
+
+
+
